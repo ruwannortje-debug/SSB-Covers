@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request a Quote - SSBCOVERS</title>
+<link rel="icon" href="logo.ico">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body { background:#0b0b0b; color:#fff; font-family:Arial, Helvetica, sans-serif; margin:0; }
+* { box-sizing:border-box; }
+header { background: linear-gradient(to right,#000,#101820); padding: 18px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { color:#1e90ff; margin:0; }
+nav a { color:#ddd; margin-left:20px; text-decoration:none; font-weight:600; }
+nav a:hover { color:#1e90ff; }
+.container { padding:40px; max-width:900px; margin:0 auto; }
+.product-title { font-size:40px; margin-bottom:10px; }
+.subtitle { color:#bbb; margin-bottom:30px; line-height:1.6; }
+.panel { background:#111; border:1px solid #222; border-radius:12px; padding:24px; box-shadow:0 0 24px rgba(30,144,255,.12); }
+select, input, textarea { padding:12px; margin:10px 0; width:100%; background:#1b1b1b; color:#fff; border:1px solid #2b2b2b; border-radius:8px; }
+textarea { min-height:120px; resize:vertical; }
+.btn { display:inline-block; padding:12px 20px; background:linear-gradient(90deg,#1e90ff,#3aa6ff); border:none; color:#fff; font-weight:bold; cursor:pointer; border-radius:8px; text-decoration:none; }
+.btn.secondary { background:#333; }
+.actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+.summary { margin-top:20px; padding:16px; border-radius:10px; background:#0f1720; border:1px solid #1f3145; }
+.note { color:#9ecbff; font-size:14px; }
+footer { background:#000; padding: 30px; text-align: center; color: #aaa; margin-top:40px; }
+@media (max-width: 700px) { header { padding:18px 20px; flex-direction:column; gap:12px; } .container { padding:20px; } .product-title { font-size:30px; } }
+</style>
+</head>
+<body>
+<header>
+    <div style="display:flex; align-items:center;">
+        <img src="logo-Photoroom.png" style="height:60px; margin-right:15px;" alt="SSBCOVERS logo">
+        <h1>SSBCOVERS</h1>
+    </div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#products">Products</a>
+        <a href="index.html#contact">Contact</a>
+    </nav>
+</header>
+<div class="container">
+    <div class="product-title">Request Your Quote</div>
+    <p class="subtitle">Select your vehicle details, then use WhatsApp or email to send the information to SSBCOVERS. No basket, cart or online payment is used on this version of the website.</p>
+    <div class="panel">
+        <label for="brand">Brand</label>
+        <select id="brand" onchange="updateModels()">
+            <option value="">Select Brand</option>
+            <option>Ford</option>
+            <option>Toyota</option>
+            <option>Volkswagen</option>
+        </select>
+        <label for="model">Model</label>
+        <select id="model" onchange="updateProduct()">
+            <option value="">Select Model</option>
+        </select>
+        <label for="type">Type</label>
+        <select id="type" onchange="updateProduct()">
+            <option value="">Select Type</option>
+            <option>Car</option>
+            <option>SUV</option>
+            <option>Bakkie</option>
+        </select>
+        <label for="name">Your Name</label>
+        <input id="name" type="text" placeholder="Your name">
+        <label for="details">Extra Notes</label>
+        <textarea id="details" placeholder="Colour, year model, special requirements, delivery area, etc."></textarea>
+        <div id="selected-product" class="summary">Select a brand, model and type to generate your quote request.</div>
+        <p class="note">Tip: GitHub Pages supports this page because it is plain HTML, CSS and JavaScript only.</p>
+        <div class="actions">
+            <a class="btn" id="whatsapp-link" href="https://wa.me/27721830573" target="_blank" rel="noopener">Send via WhatsApp</a>
+            <a class="btn secondary" id="email-link" href="mailto:info@ssbcovers.co.za">Send via Email</a>
+        </div>
+    </div>
+</div>
+<footer>© 2026 <strong>SSBCOVERS</strong> — Quote-based website version</footer>
+<script>
+const products = {
+    "Ford": { "Fiesta": { "Car": 1299 }, "Ranger": { "Bakkie": 1999, "SUV": 1699 }},
+    "Toyota": { "Corolla": { "Car": 1299 }, "Hilux": { "Bakkie": 1999 }},
+    "Volkswagen": { "Golf": { "Car": 1299 }, "Amarok": { "Bakkie": 1999, "SUV": 1699 }}
+};
+const params = new URLSearchParams(window.location.search);
+const presetType = params.get('type');
+if (presetType) document.addEventListener('DOMContentLoaded', () => {
+    const typeSelect = document.getElementById('type');
+    Array.from(typeSelect.options).forEach(opt => {
+        if (opt.value.toLowerCase() === presetType.toLowerCase()) typeSelect.value = opt.value;
+    });
+    updateProduct();
+});
+function updateModels() {
+    const brand = document.getElementById('brand').value;
+    const modelSelect = document.getElementById('model');
+    modelSelect.innerHTML = '<option value="">Select Model</option>';
+    if (products[brand]) {
+        for (const model in products[brand]) {
+            modelSelect.innerHTML += `<option>${model}</option>`;
+        }
+    }
+    updateProduct();
+}
+function updateProduct() {
+    const brand = document.getElementById('brand').value;
+    const model = document.getElementById('model').value;
+    const type = document.getElementById('type').value;
+    const summary = document.getElementById('selected-product');
+    if (brand && model && type && products[brand]?.[model]?.[type]) {
+        const price = products[brand][model][type];
+        summary.innerHTML = `<strong>Selected:</strong> ${brand} ${model} ${type} Cover<br><strong>From:</strong> R${price}`;
+    } else {
+        summary.textContent = 'Select a brand, model and type to generate your quote request.';
+    }
+    buildContactLinks();
+}
+function buildContactLinks() {
+    const brand = document.getElementById('brand').value || 'Not selected';
+    const model = document.getElementById('model').value || 'Not selected';
+    const type = document.getElementById('type').value || 'Not selected';
+    const name = document.getElementById('name').value || 'Customer';
+    const details = document.getElementById('details').value || 'No extra notes';
+    const price = products[brand]?.[model]?.[type] ? `From R${products[brand][model][type]}` : 'Price on request';
+    const message = `Hello SSBCOVERS, my name is ${name}. I would like a quote for a ${brand} ${model} ${type} cover. ${price}. Extra notes: ${details}`;
+    document.getElementById('whatsapp-link').href = `https://wa.me/27721830573?text=${encodeURIComponent(message)}`;
+    document.getElementById('email-link').href = `mailto:info@ssbcovers.co.za?subject=${encodeURIComponent('Quote request from website')}&body=${encodeURIComponent(message)}`;
+}
+document.getElementById('name').addEventListener('input', buildContactLinks);
+document.getElementById('details').addEventListener('input', buildContactLinks);
+document.getElementById('type').addEventListener('change', buildContactLinks);
+buildContactLinks();
+</script>
+</body>
+</html>
